@@ -14,6 +14,8 @@ disp(['норма матрицы: ', num2str(norm(A, inf))]);
 disp(['число обусловленности матрицы: ', num2str(cond(A))]);
 
 % Инициализируем ячейку для хранения подматриц
+matrixSize = size(A);
+submatrixSize = rank(A);
 submatrices = cell(1, (size(A, 1) - submatrixSize + 1) * (size(A, 2) - submatrixSize + 1));
 
 % Извлекаем все подматрицы размером(rank*rank)
