@@ -70,8 +70,8 @@ fprintf( 'Решение \n');
 disp(t)
 
 rez = t * all_soed;
-disp(rez);
-fprintf('CaN2O6 + Na2CO3 = CO2 + CaO + 2*NaNC3\n\n');
+%disp(rez);
+fprintf('2*NaNC3 + CO2 + CaO = CaN2O6 + Na2CO3\n\n');
 
 fprintf( 'Проверка условия B*A=0\n');
 disp(t*A);
@@ -115,11 +115,11 @@ fprintf( 'Решение \n');
 disp(t);
 
 rez = t * all_soed;
-disp(rez);
+%disp(rez);
 
 reag = [H H];
 prod = [H H];
-%fprintf('CaN2O6 + H2O2 = 2HNO3 + CaO\n\n');
+fprintf('CaN2O6 + H2O2 = 2HNO3 + CaO\n\n');
 
 fprintf( 'Проверка условия B*A=0\n');
 disp(t*A);
