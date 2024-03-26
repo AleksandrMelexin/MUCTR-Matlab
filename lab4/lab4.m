@@ -1,9 +1,9 @@
 clear; clc;
-%A = [-0.76, -0.04, 0.21, -0.18; 0.45, -1.23, 0.66, 0; 0.26, 0.34, -1.11, 0; 0.05, -0.26, 0.34, -1.12]; % для проверки работоспособности методов
-%B = [-1.24; 0.88; -0.63; 1.17]; % для проверки работоспособности методов
+A = [-0.76, -0.04, 0.21, -0.18; 0.45, -1.23, 0.66, 0; 0.26, 0.34, -1.11, 0; 0.05, -0.26, 0.34, -1.12]; % для проверки работоспособности методов
+B = [-1.24; 0.88; -0.63; 1.17]; % для проверки работоспособности методов
 % вариант 14
-A = [8 4 -6 0; 1 2 1 -6; -3 -6 -2 -9; 4 3 2 1];
-B = [596; 262.02; -731.47; 396.83];
+%A = [8 4 -6 0; 1 2 1 -6; -3 -6 -2 -9; 4 3 2 1];
+%B = [596; 262.02; -731.47; 396.83];
 
 % 1 Определение детерминанта матрицы коэффициентов
 det_A = det(A);
@@ -26,7 +26,6 @@ disp(['Точность решения системы: ', num2str(eps)]);
 fprintf('\n---------------------------------------------------------\n\n');
 
 % 4 Решить систему методом простых итераций
-
 % k - максимальное количество итераций (иначе бесконечный цикл может быть)
 k = 1000;
 % Проверка условий сходимости для метода простой итерации
@@ -37,7 +36,8 @@ if spectral_radius_simple >= 1
     disp('Метод простых итераций расходится');
 else
     disp('Метод простых итераций сходится');
-    [X_simple, iters_simple] = simple_iteration_method(A, B, k, eps); 
+    t = 0.5; % множитель для метода простых итераций
+    [X_simple, iters_simple] = simple_iteration_method(A, B, k, eps, t); 
     disp('Решение методом простых итераций:');
     disp(X_simple);
     disp(['Число итераций для решения: ', num2str(iters_simple)]);
@@ -89,24 +89,22 @@ end
 fprintf('\n---------------------------------------------------------\n\n');
 
 function [X, iters] = seidel_method(A, B, max_iters, epsilon) % метод зейделя
-    X = zeros(size(B));
-    
+    X = zeros(size(B)); % Начальное приближение 
     for iters = 1:max_iters
         X_old = X;
         for i = 1:length(B)
             sigma = A(i, 1:i-1) * X(1:i-1) + A(i, i+1:end) * X_old(i+1:end);
             X(i) = (B(i) - sigma) / A(i, i);
         end
-        if norm(X - X_old, inf) < epsilon
+        if norm(X - X_old, inf) < epsilon % проверка условия остановки(норма разности меньше точности)
             break;
         end
     end
 end
 
 function [X, iters] = jacobi_method(A, B, max_iters, epsilon) % метод якоби
-    X = zeros(size(B)); 
+    X = zeros(size(B)); % Начальное приближение 
     n = length(B);
-    
     for iters = 1:max_iters
         X_old = X;
         for i = 1:n
@@ -116,23 +114,18 @@ function [X, iters] = jacobi_method(A, B, max_iters, epsilon) % метод якоби
             sigma = A(i, :) * X_old - A(i, i) * X_old(i);
             X(i) = (B(i) - sigma) / A(i, i);
         end
-        if norm(X - X_old, inf) < epsilon
+        if norm(X - X_old, inf) < epsilon % проверка условия остановки(норма разности меньше точности)
             break;
         end
     end
 end
 
-function [X, iters] = simple_iteration_method(A, B, max_iters, epsilon) % метод простых итераций
-    % Начальное приближение
-    X = zeros(size(B));
-    % max_iters
-    % максимальное количество итераций (иначе бесконечный цикл может быть)
+function [X, iters] = simple_iteration_method(A, B, max_iters, epsilon, t) % метод простых итераций
+    X = zeros(size(B)); % Начальное приближение
+    % max_iters - максимальное количество итераций (иначе бесконечный цикл может быть)
     for iters = 1:max_iters
-        % последовательное нахождение нового приближения
-        X_new = A * X + B;
-        
-        % проверка условия остановки(норма разности меньше точности)
-        if norm(X_new - X, inf) < epsilon
+        X_new = A * X + t*B; % последовательное нахождение нового приближения
+        if norm(X_new - X, inf) < epsilon % проверка условия остановки(норма разности меньше точности)
             X = X_new;
             break;
         end
