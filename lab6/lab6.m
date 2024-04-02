@@ -53,7 +53,7 @@ end
 
 % Решение с использованием встроенной функции fsolve
 eq_system = @(vars) [eq1(vars(1), vars(2)); eq2(vars(1)) - vars(2)];
-[x_fsolve, ~, exitflag] = fsolve(eq_system, [x0, y0], options);
+[x_fsolve, exitflag, output] = fsolve(eq_system, [x0, y0], options);
 if exitflag <= 0
     disp('Функция fsolve не смогла найти решение');
 else
