@@ -66,8 +66,6 @@ plot(midpoint1, interp_value1, 'xr', midpoint2, interp_value2, 'xr');
 xlabel('Давление (кПа)'); 
 ylabel('Массовая теплоемкость'); 
 legend('Узловые точки', 'Полином polyfit', 'Сплайн', 'Канонический полином' ,'Оценочные точки');
-
-
 function [p] = buildCanonicalPoly(x, y)
     n = length(x);
     A = zeros(n, n);
