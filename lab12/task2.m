@@ -82,17 +82,6 @@ errors_euler = [error_euler_1, error_euler_2];
 % Абсолютные погрешности для метода Рунге-Кутты 4 порядка
 errors_rk = [error_rk_1, error_rk_2];
 
-% Построение графика
-figure;
-plot(h_values, errors_euler, 'bo-', 'LineWidth', 1.5, 'DisplayName', 'Эйлер');
-hold on;
-plot(h_values, errors_rk, 'rs--', 'LineWidth', 1.5, 'DisplayName', 'Рунге-кутта 4 порядка');
-xlabel('Шаг интегрирования (h)');
-ylabel('Абсолютная погрешность');
-title('Зависимость абсолютной погрешности от шага интегрирования');
-legend();
-grid on;
-
 % Интерполяция значений метода Эйлера на те же точки, что и для MATLAB
 y_euler_interp_1 = interp1(x_euler_1, y_euler_1, x_matlab, 'linear', 'extrap');
 y_euler_interp_2 = interp1(x_euler_2, y_euler_2, x_matlab, 'linear', 'extrap');
