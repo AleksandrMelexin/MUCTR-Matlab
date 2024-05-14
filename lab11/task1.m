@@ -1,9 +1,9 @@
 clc; clear;
 % Задание 1
 % Начальный интервал
-a = 10;
-b = 30;
-d0 = 5; % Начальное приближение
+a = 12;
+b = 18;
+d0 = 14; % Начальное приближение
 tol = 1e-4; % Точность и максимальное количество итераций
 max_iter = 100;
 
@@ -126,52 +126,41 @@ function min_d = golden_section_method(a, b, tol, max_iter) % метод зол�
     hold off;
 end
 
-function min_d = parabolic_method(a, b, tol, max_iter) % метод парабол
-    x = [a, (a + b) / 2, b];
-    f = zeros(1, 3);
-    f(1) = calculate_heat_loss(x(1));
-    f(2) = calculate_heat_loss(x(2));
-    f(3) = calculate_heat_loss(x(3));
-    iter = 0;
+function min_d = parabolic_method(a, b, tol, max_iter)
+    % Начальные приближения
+    x1 = a;
+    x3 = b;
+    x2 = (x1 + x3) / 2;
+    
+    iter = 0; % Инициализация переменной iter
     d_values = []; % Для хранения значений d на каждой итерации
     heat_losses = []; % Для хранения значений потерь тепла на каждой итерации
-    while abs(x(2) - x(1)) > tol && iter < max_iter
-        A = ((x(2) - x(3)) * f(1) + (x(3) - x(1)) * f(2) + (x(1) - x(2)) * f(3)) / ...
-            ((x(1) - x(2)) * (x(2) - x(3)) * (x(3) - x(1)));
-        B = (f(2) - f(1)) / (x(2) - x(1)) - (x(1) + x(2)) * A;
-        C = f(1) - A * x(1)^2 - B * x(1);
-        min_x = -B / (2 * A);
-        if min_x < x(2)
-            if calculate_heat_loss(min_x) < f(2)
-                x(3) = x(2);
-                x(2) = min_x;
-                f(3) = f(2);
-                f(2) = calculate_heat_loss(min_x);
-            else
-                x(1) = min_x;
-                f(1) = calculate_heat_loss(min_x);
-            end
-        else
-            if calculate_heat_loss(min_x) < f(2)
-                x(1) = x(2);
-                x(2) = min_x;
-                f(1) = f(2);
-                f(2) = calculate_heat_loss(min_x);
-            else
-                x(3) = min_x;
-                f(3) = calculate_heat_loss(min_x);
-            end
-        end
+    
+    while abs(x3 - x1) > tol && iter < max_iter
+        % Вычисление нового приближения x2 с помощью параболы
+        f1 = calculate_heat_loss(x1);
+        f2 = calculate_heat_loss(x2);
+        f3 = calculate_heat_loss(x3);
+        x_new = x2 - ((x2 - x1)^2 * (f2 - f3) - (x2 - x3)^2 * (f2 - f1)) / ...
+            (2 * ((x2 - x1) * (f2 - f3) - (x2 - x3) * (f2 - f1)));
+        
+        % Обновление точек
+        x1 = x2;
+        x2 = x_new;
+        x3 = (x1 + x3) / 2;
+        
         % Сохраняем значения d и потерь тепла на текущей итерации
-        d_values = [d_values, x(2)];
-        heat_losses = [heat_losses, f(2)];
-        iter = iter + 1;
+        d_values = [d_values, x2];
+        heat_losses = [heat_losses, calculate_heat_loss(x2)];
+        
+        iter = iter + 1; % Увеличение счетчика итераций
     end
-    min_d = x(2);
-    d_values(end) = [];
-    heat_losses(end) = [];
-    disp(['Количество итераций (метод парабол): ', num2str(iter)]); % Вывод количества итераций на экран
-
+    
+    min_d = x2;
+    
+    % Вывод количества итераций на экран
+    disp(['Количество итераций (метод парабол): ', num2str(iter)]);
+    
     % Вывод графика
     figure;
     plot(linspace(10, 30, 100), calculate_heat_loss(linspace(10, 30, 100)), 'b'); % График функции потерь тепла
