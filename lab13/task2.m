@@ -61,12 +61,12 @@ for i = 1:length(x_implicit)
 end
 disp('___________________________________________________________________')
 
-% Стандартные методы ODE45
+% Стандартные методы ODE15s
 % Определение начальных условий
 y0 = [1; 1];
 
 % Решение системы дифференциальных уравнений
-[x_ode45, y_ode45] = ode45(@myODEs, [0, 1], y0);
+[x_ode15s, y_ode15s] = ode15s(@myODEs, [0, 1], y0);
 
 % Визуализация результатов
 figure
@@ -75,8 +75,8 @@ plot(x_explicit, y1_explicit, 'r', 'DisplayName', 'Явный Эйлер y1');
 plot(x_explicit, y2_explicit, 'g', 'DisplayName', 'Явный Эйлер y2');
 plot(x_implicit, y1_implicit, 'b', 'DisplayName', 'Неявный Эйлер y1');
 plot(x_implicit, y2_implicit, 'm', 'DisplayName', 'Неявный Эйлер y2');
-plot(x_ode45, y_ode45(:,1), 'k--', 'DisplayName', 'MATLAB y1');
-plot(x_ode45, y_ode45(:,2), 'c--', 'DisplayName', 'MATLAB y2');
+plot(x_ode15s, y_ode15s(:,1), 'k--', 'DisplayName', 'MATLAB y1 (ODE15s)');
+plot(x_ode15s, y_ode15s(:,2), 'c--', 'DisplayName', 'MATLAB y2 (ODE15s)');
 grid on
 xlabel('x');
 ylabel('y');
@@ -86,5 +86,5 @@ hold off
 
 % Определение функции myODEs
 function dydx = myODEs(x, y)
-    dydx = [y(1) * exp(-x.^2) + x * y(2); 3 * x - y(1) + 2 * y(2)];
+    dydx = [y(1) * exp(x.^2) + x * y(2); 3 * x - y(1) + 2 * y(2)];
 end
