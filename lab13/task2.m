@@ -7,7 +7,7 @@ y2_explicit(1) = 1;
 h = 0.1;
 i = 1;
 disp('Числа жёсткости') 
-while(x_explicit(i) < 1) 
+while(x_explicit(i) < 0.9) 
     g = [exp(x_explicit(i).^2), x_explicit(i); -1, 2];
     s = max(real(eig(g))) / min(real(eig(g)));
     fprintf('%d %d\n', i, s);
@@ -31,23 +31,27 @@ for i = 1:length(x_explicit)
 end
 disp('___________________________________________________________________') 
 
-% Эйлер неявный
+% метод неявного Эйлера 
 x_implicit(1) = 0;
 y1_implicit(1) = 1;
 y2_implicit(1) = 1;
-y1(1) = y1_implicit(1);
-y2(1) = y2_implicit(1);
+syms y1_sym y2_sym
 h = 0.1;
-h2 = h / 2;
 i = 1;
-while(x_implicit(i) < 1)  
+
+while(x_implicit(i) < 0.9)  
     i = i + 1;
-    y1_implicit(i) = y1_implicit(i-1) + (y1_implicit(i-1) * exp(x_implicit(i-1).^2) + x_implicit(i-1) * y2_implicit(i-1)) * h;
-    y2_implicit(i) = y2_implicit(i-1) + (3 * x_implicit(i-1) - y1_implicit(i-1) + 2 * y2_implicit(i-1)) * h;
-    y1(i) = y1(i-1) + (y1(i-1) * exp(x_implicit(i-1).^2) + x_implicit(i-1) * y2(i-1) + y1(i-1) * exp(x_implicit(i-1).^2) + x_implicit(i-1) * y2(i-1)) * h2;
-    y2(i) = y2(i-1) + (3 * x_implicit(i-1) - y1(i-1) + 2 * y2(i-1) + 3 * x_implicit(i-1) - y1_implicit(i-1) + 2 * y2_implicit(i-1)) * h2;
+    F1 = y1_sym == y1_implicit(i-1) + (y1_sym * exp(x_implicit(i-1).^2) + x_implicit(i-1) * y2_sym) * h;
+    F2 = y2_sym == y2_implicit(i-1) + (3 * x_implicit(i-1) - y1_sym + 2 * y2_sym) * h;
+    
+    S = vpasolve([F1, F2], [y1_sym, y2_sym], [y1_implicit(i-1), y2_implicit(i-1)]);
+    disp(S);
+    
+    y1_implicit(i) = double(S.y1_sym);
+    y2_implicit(i) = double(S.y2_sym);
     x_implicit(i) = x_implicit(i-1) + h; 
 end
+
 % Вывод найденных значений функции 
 fprintf('Значения функции y1 = f1(x) по неявному методу Эйлера:\n\n');
 for i = 1:length(x_implicit)
